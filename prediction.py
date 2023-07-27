@@ -1,10 +1,11 @@
+import os
 import torch
 from transformers import DistilBertTokenizer
 from dataset import ToxicityDataset
 from torch.utils.data import DataLoader
 from model import DistilBERTClass
 from utils import get_device
-
+import gdown
 
 device = get_device()
 
@@ -29,6 +30,13 @@ def prepare_data(text):
 def load_model(model_path):
     model = DistilBERTClass()
     model.to(get_device())
+    os.makedirs("/".join(model_path.split("/")[:-1]), exist_ok=True)
+    if not os.path.exists(model_path):
+        print("Downloading Pretrained Model!")
+        url = (
+            "https://drive.google.com/uc?id=1-78xAf_LWNG5WnQZVHgym6ULqcXgpp6Q"
+        )
+        gdown.download(url, model_path, quiet=False)
     model.load_state_dict(torch.load(model_path, map_location=device))
     return model
 
